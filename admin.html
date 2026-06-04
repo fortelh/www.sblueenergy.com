@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S-Blue Energy | Enterprise Control Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800 flex h-screen overflow-hidden">
+
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-blue-950 text-white flex flex-col justify-between p-6 shrink-0 shadow-xl">
+        <div class="space-y-6">
+            <div class="border-b border-blue-800 pb-3">
+                <h1 class="text-lg font-black tracking-wider text-white">S-BLUE ENERGY CONTROL PANEL</h1>
+                <p class="text-[9px] text-blue-400 font-bold uppercase mt-0.5">Core Operational Portal</p>
+            </div>
+            
+            <nav class="space-y-1 text-xs font-bold">
+                <p class="text-[10px] uppercase text-gray-500 tracking-wider font-black px-3 pt-2 pb-1">Branding & Layouts</p>
+                <button onclick="switchTab('tab-logo')" class="tab-btn w-full text-left px-3 py-2.5 rounded-xl transition text-gray-400 hover:bg-blue-900/50 hover:text-white flex items-center gap-2">🖼️ Global System Logo</button>
+                <button onclick="switchTab('tab-dossier')" class="tab-btn w-full text-left px-3 py-2.5 rounded-xl transition text-gray-400 hover:bg-blue-900/50 hover:text-white flex items-center gap-2">🏠 Homepage Dossier</button>
+                <button onclick="switchTab('tab-about')" class="tab-btn w-full text-left px-3 py-2.5 rounded-xl transition text-gray-400 hover:bg-blue-900/50 hover:text-white flex items-center gap-2">📖 About Page Text</button>
+                
+                <p class="text-[10px] uppercase text-gray-500 tracking-wider font-black px-3 pt-4 pb-1">System Connectors</p>
+                <button onclick="switchTab('tab-mail')" class="tab-btn w-full text-left px-3 py-2.5 rounded-xl transition text-blue-400 hover:bg-blue-900/50 flex items-center gap-2">⚙️ Mail SMTP Settings</button>
+                <button onclick="switchTab('tab-services')" class="tab-btn w-full text-left px-3 py-2.5 rounded-xl transition text-gray-400 hover:bg-blue-900/50 hover:text-white flex items-center gap-2">🛠️ Core Services</button>
+                <button onclick="switchTab('tab-projects')" class="tab-btn w-full text-left px-3 py-2.5 rounded-xl transition text-gray-400 hover:bg-blue-900/50 hover:text-white flex items-center gap-2">📂 Site Projects</button>
+                
+                <p class="text-[10px] uppercase text-gray-500 tracking-wider font-black px-3 pt-4 pb-1">User Registers</p>
+                <button onclick="switchTab('tab-customers')" class="tab-btn w-full text-left px-3 py-2.5 rounded-xl transition text-green-400 hover:bg-blue-900/50 flex items-center gap-2">👥 Customer Matrix</button>
+                <button onclick="switchTab('tab-staff')" class="tab-btn w-full text-left px-3 py-2.5 rounded-xl transition text-purple-400 hover:bg-blue-900/50 flex items-center gap-2">🛡️ Staff Matrix</button>
+            </nav>
+        </div>
+
+        <div class="pt-3 border-t border-blue-900">
+<a href="/" class="block text-center hover:bg-black text-white font-bold py-2 px-6 rounded-xl text-xs transition">
+    ← Return to Website
+</a>
+            <a href="/auth/logout" class="block text-center bg-red-950/40 hover:bg-red-900 text-red-400 font-bold text-xs uppercase tracking-wider py-2.5 rounded-xl transition">Terminate Session</a>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-1 p-10 overflow-y-auto bg-gray-50">
+        
+        <!-- LOGO -->
+        <div id="tab-logo" class="admin-tab hidden space-y-4">
+            <h2 class="text-2xl font-black text-blue-950">System Branding</h2>
+            <form action="/admin/update-logo" method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded-2xl border shadow-sm max-w-xl">
+                <input type="file" name="logo" required class="w-full p-2.5 border rounded-xl bg-gray-50 text-xs mb-4">
+                <button type="submit" class="bg-blue-950 text-white font-bold text-xs uppercase px-5 py-3 rounded-xl">Save Logo</button>
+            </form>
+        </div>
+
+        <!-- DOSSIER -->
+        <div id="tab-dossier" class="admin-tab hidden space-y-4">
+            <h2 class="text-2xl font-black text-blue-950">Homepage Hero Text</h2>
+            <div class="bg-white p-6 rounded-2xl border shadow-sm max-w-3xl space-y-4">
+                <textarea id="inp-dossier" class="w-full h-32 p-4 border rounded-xl font-medium text-sm text-gray-700 bg-gray-50"></textarea>
+                <button onclick="commitSetting('dossier_text', 'inp-dossier')" class="bg-blue-950 text-white font-bold text-xs uppercase px-5 py-3 rounded-xl">Update Dossier</button>
+            </div>
+        </div>
+
+        <!-- ABOUT -->
+        <div id="tab-about" class="admin-tab hidden space-y-4">
+            <h2 class="text-2xl font-black text-blue-950">About Biography</h2>
+            <div class="bg-white p-6 rounded-2xl border shadow-sm max-w-3xl space-y-4">
+                <textarea id="inp-about" class="w-full h-64 p-4 border rounded-xl font-medium text-sm text-gray-700 bg-gray-50"></textarea>
+                <button onclick="commitSetting('about_text', 'inp-about')" class="bg-blue-950 text-white font-bold text-xs uppercase px-5 py-3 rounded-xl">Update Biography</button>
+            </div>
+        </div>
+
+        <!-- SMTP -->
+        <div id="tab-mail" class="admin-tab hidden space-y-4">
+            <h2 class="text-2xl font-black text-blue-600">SMTP Configuration</h2>
+            <div class="bg-white p-6 rounded-2xl border shadow-sm max-w-2xl space-y-4">
+                <input type="text" id="inp-smtp-host" placeholder="Host" class="w-full p-2.5 border rounded-lg text-xs">
+                <input type="text" id="inp-smtp-port" placeholder="Port" class="w-full p-2.5 border rounded-lg text-xs">
+                <input type="text" id="inp-smtp-user" placeholder="Email/User" class="w-full p-2.5 border rounded-lg text-xs">
+                <input type="password" id="inp-smtp-pass" placeholder="Password" class="w-full p-2.5 border rounded-lg text-xs">
+                <button onclick="saveSMTPConfig()" class="bg-blue-950 text-white font-bold text-xs uppercase px-5 py-3 rounded-xl">Save Settings</button>
+            </div>
+        </div>
+
+        <!-- SERVICES -->
+        <div id="tab-services" class="admin-tab hidden space-y-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="space-y-4">
+                    <h2 id="service-form-title" class="text-2xl font-black text-blue-950">Add Service</h2>
+                    <form id="form-services" action="/admin/services/create" method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded-2xl border shadow-sm grid grid-cols-2 gap-4">
+                        <input type="hidden" id="service-edit-id" name="id">
+                        <input type="text" id="service-title" name="title" required placeholder="Service Title" class="p-2.5 border rounded-xl text-xs">
+                        <input type="text" id="service-description" name="description" required placeholder="Short Tag" class="p-2.5 border rounded-xl text-xs">
+                        <textarea id="service-content" name="content" required placeholder="Full technical specs..." class="col-span-2 h-32 p-2.5 border rounded-xl text-xs"></textarea>
+                        <div class="col-span-2 space-y-1">
+                            <label class="text-[10px] text-gray-400 font-bold uppercase">Image File (Leave blank if keeping current image during edit)</label>
+                            <input type="file" id="service-image" name="image"  class="w-full p-2 border rounded-xl text-xs bg-gray-50">
+                        </div>
+                        <div class="col-span-2 flex gap-2">
+                            <button type="submit" id="service-submit-btn" class="flex-1 bg-blue-950 text-white font-bold text-xs uppercase py-3 rounded-xl">Publish Service</button>
+                            <button type="button" id="service-cancel-btn" onclick="resetServiceForm()" class="hidden bg-gray-200 text-gray-700 font-bold text-xs uppercase px-4 py-3 rounded-xl">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="space-y-4">
+                    <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Active Services</h3>
+                    <div id="manage-services-list" class="space-y-3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROJECTS -->
+        <div id="tab-projects" class="admin-tab hidden space-y-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="space-y-4">
+                    <h2 id="project-form-title" class="text-2xl font-black text-blue-950">Log Project</h2>
+                    <form id="form-projects" action="/admin/projects/create" method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded-2xl border shadow-sm grid grid-cols-2 gap-4">
+                        <input type="hidden" id="project-edit-id" name="id">
+                        <input type="text" id="project-title" name="title" required placeholder="Project Name" class="p-2.5 border rounded-xl text-xs">
+                        <input type="text" id="project-location" name="location" required placeholder="Location" class="p-2.5 border rounded-xl text-xs">
+                        <textarea id="project-content" name="content" placeholder="Description" class="col-span-2 h-24 p-2.5 border rounded-xl text-xs"></textarea>
+                        <div class="col-span-2 space-y-1">
+                            <label class="text-[10px] text-gray-400 font-bold uppercase">Image File (Leave blank if keeping current image during edit)</label>
+                            <input type="file" id="project-image" name="image" class="w-full p-2 border rounded-xl text-xs bg-gray-50">
+                        </div>
+                        <div class="col-span-2 flex gap-2">
+                            <button type="submit" id="project-submit-btn" class="flex-1 bg-blue-950 text-white font-bold text-xs uppercase py-3 rounded-xl">Save Project</button>
+                            <button type="button" id="project-cancel-btn" onclick="resetProjectForm()" class="hidden bg-gray-200 text-gray-700 font-bold text-xs uppercase px-4 py-3 rounded-xl">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="space-y-4">
+                    <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Active Projects</h3>
+                    <div id="manage-projects-list" class="space-y-3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CUSTOMERS -->
+       <div id="tab-customers" class="admin-tab hidden space-y-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div class="lg:col-span-1 space-y-4">
+            <h2 class="text-2xl font-black text-blue-950">Customer Details</h2>
+            <div id="edit-form-container" class="bg-white p-6 rounded-2xl border shadow-sm">
+                <p class="text-gray-400 text-xs italic">Select a customer from the right to edit their profile.</p>
+            </div>
+        </div>
+
+        <div class="lg:col-span-2 space-y-4">
+            <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Active Customer Matrix</h3>
+            <div id="customer-list" class="bg-white rounded-2xl border shadow-sm divide-y overflow-hidden">
+                </div>
+        </div>
+    </div>
+</div>
+
+        <!-- STAFF MATRIX -->
+        <div id="tab-staff" class="admin-tab hidden space-y-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-1 space-y-4">
+            <h2 class="text-2xl font-black text-purple-600">Personnel Registry</h2>
+            <div id="staff-edit-form-container" class="bg-white p-6 rounded-2xl border shadow-sm">
+                <p class="text-gray-400 text-xs italic">Select a staff member from the right to edit.</p>
+            </div>
+        </div>
+        <div class="lg:col-span-2 space-y-4">
+            <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Active Personnel Matrix</h3>
+            <div id="staff-list" class="bg-white rounded-2xl border shadow-sm divide-y overflow-hidden"></div>
+<button onclick="openAddStaffModal()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-xl text-xs">
+    + Provision New Administrator
+</button>
+        </div>
+    </div>
+</div>
+                
+                <!-- Live Matrix Registry View -->
+                <div class="space-y-4 lg:col-span-2">
+                    <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Active Personnel Matrix</h3>
+                    <div id="staff-list" class="bg-white rounded-2xl border shadow-sm divide-y overflow-hidden"></div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Local state matrices
+        let localServices = [];
+        let localProjects = [];
+        let localStaff = [];
+
+        // --- 1. CORE TAB CONTROLLER ---
+        function switchTab(tabId) {
+    // 1. UI Cleanup: Hide all tabs and reset button styles
+    document.querySelectorAll('.admin-tab').forEach(t => t.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('bg-blue-900', 'text-white'));
+    
+    // 2. Activate target tab
+    const activeTab = document.getElementById(tabId);
+    if(activeTab) activeTab.classList.remove('hidden');
+    
+    // 3. Highlight the clicked button
+    if(window.event && window.event.currentTarget) {
+        window.event.currentTarget.classList.add('bg-blue-900', 'text-white');
+    }
+
+    // 4. Targeted Loading (Decoupled Logic)
+    switch(tabId) {
+        case 'tab-customers':
+            loadUserRegistries(); // Now strictly for customers
+            break;
+        case 'tab-staff':
+            loadStaffRegistry();  // Now strictly for staff
+            break;
+        case 'tab-services':
+        case 'tab-projects':
+            loadContentRegistries();
+            break;
+        default:
+            loadSystemConfigurations();
+            break;
+    }
+}
+
+        // --- 2. SETTINGS MANAGERS ---
+      function loadSystemConfigurations() {
+    fetch('/api/settings/all')
+        .then(r => r.json())
+        .then(data => {
+            // Use optional chaining or check existence to prevent crashes
+            const dossierInp = document.getElementById('inp-dossier');
+            const aboutInp = document.getElementById('inp-about');
+            
+            if(dossierInp) dossierInp.value = data.dossier_text || "";
+            if(aboutInp) aboutInp.value = data.about_text || "";
+            
+            // SMTP Fields
+            if(document.getElementById('inp-smtp-host')) 
+                document.getElementById('inp-smtp-host').value = data.smtp_host || "";
+            // ... repeat for other SMTP fields
+        })
+        .catch(err => console.error("Data fetch failed, but keeping UI alive:", err));
+}
+
+    function commitSetting(key, inputId) {
+    const inputElement = document.getElementById(inputId);
+    if(!inputElement) return alert("Input field not found");
+    
+    const val = inputElement.value;
+    fetch('/admin/update-settings', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ key: key, value: val })
+    }).then(res => { 
+        if(res.ok) alert('Successfully updated: ' + key); 
+        else alert('Update failed. Check login session.');
+    });
+}
+
+        function saveSMTPConfig() {
+            commitSetting('smtp_host', 'inp-smtp-host');
+            commitSetting('smtp_port', 'inp-smtp-port');
+            commitSetting('smtp_user', 'inp-smtp-user');
+            commitSetting('smtp_pass', 'inp-smtp-pass');
+        }
+
+        // --- 3. CONTENT READ & WRITERS (SERVICES & PROJECTS) ---
+        function loadContentRegistries() {
+            fetch('/api/services').then(r => r.json()).then(data => {
+                localServices = data;
+                const list = document.getElementById('manage-services-list');
+                list.innerHTML = data.map(item => `
+                    <div class="bg-white border p-3 rounded-xl flex items-center justify-between shadow-sm">
+                        <div class="flex items-center gap-3">
+                            <img src="${item.image_url}" class="w-10 h-10 object-cover rounded-lg bg-gray-100">
+                            <div><p class="text-xs font-bold text-blue-950">${item.title}</p></div>
+                        </div>
+                        <div class="flex gap-1">
+                            <button onclick="editService(${item.id})" class="text-[11px] font-bold text-blue-600 hover:bg-blue-50 px-2 py-1.5 rounded-lg transition">✏️ Edit</button>
+                            <button onclick="deleteContent('services', ${item.id})" class="text-red-500 hover:bg-red-50 p-2 rounded-lg transition">🗑️</button>
+                        </div>
+                    </div>
+                `).join('');
+            });
+
+            fetch('/api/projects').then(r => r.json()).then(data => {
+                localProjects = data;
+                const list = document.getElementById('manage-projects-list');
+                list.innerHTML = data.map(item => `
+                    <div class="bg-white border p-3 rounded-xl flex items-center justify-between shadow-sm">
+                        <div class="flex items-center gap-3">
+                            <img src="${item.image_url}" class="w-10 h-10 object-cover rounded-lg bg-gray-100">
+                            <div><p class="text-xs font-bold text-blue-950">${item.title}</p></div>
+                        </div>
+                        <div class="flex gap-1">
+                            <button onclick="editProject(${item.id})" class="text-[11px] font-bold text-blue-600 hover:bg-blue-50 px-2 py-1.5 rounded-lg transition">✏️ Edit</button>
+                            <button onclick="deleteContent('projects', ${item.id})" class="text-red-500 hover:bg-red-50 p-2 rounded-lg transition">🗑️</button>
+                        </div>
+                    </div>
+                `).join('');
+            });
+        }
+
+    function editService(id) {
+    const match = localServices.find(s => s.id === id);
+    if(!match) return;
+
+    // Populate the inputs
+    document.getElementById('service-edit-id').value = match.id;
+    document.getElementById('service-title').value = match.title;
+    document.getElementById('service-description').value = match.description;
+    document.getElementById('service-content').value = match.content;
+    
+    // IMPORTANT: Point the form to the update route
+    document.getElementById('form-services').action = '/admin/services/update';
+    
+    // Change UI state
+    document.getElementById('service-form-title').innerText = "Modify Service Node";
+    document.getElementById('service-submit-btn').innerText = "Update Existing Service Record";
+    document.getElementById('service-cancel-btn').classList.remove('hidden');
+}
+
+       function resetServiceForm() {
+    document.getElementById('form-services').reset();
+    document.getElementById('service-edit-id').value = "";
+    document.getElementById('form-services').action = '/admin/services/create'; // Back to Create
+    document.getElementById('service-form-title').innerText = "Add Service";
+    document.getElementById('service-submit-btn').innerText = "Publish Service";
+    document.getElementById('service-cancel-btn').classList.add('hidden');
+}
+function editProject(id) {
+    const match = localProjects.find(p => p.id === id);
+    if(!match) return;
+
+    // Fill the fields
+    document.getElementById('project-edit-id').value = match.id;
+    document.getElementById('project-title').value = match.title;
+    document.getElementById('project-location').value = match.location;
+    document.getElementById('project-content').value = match.content || '';
+    
+    // IMPORTANT: Point the form to the project update route
+    document.getElementById('form-projects').action = '/admin/projects/update';
+    
+    // Update UI
+    document.getElementById('project-form-title').innerText = "Modify Project Footprint";
+    document.getElementById('project-submit-btn').innerText = "Update Existing Project Footprint";
+    document.getElementById('project-cancel-btn').classList.remove('hidden');
+}
+      function resetProjectForm() {
+    document.getElementById('form-projects').reset();
+    document.getElementById('project-edit-id').value = "";
+    document.getElementById('form-projects').action = '/admin/projects/create'; // Back to Create
+    document.getElementById('project-form-title').innerText = "Log Project";
+    document.getElementById('project-submit-btn').innerText = "Save Project";
+    document.getElementById('project-cancel-btn').classList.add('hidden');
+}
+
+        function deleteContent(type, id) {
+            if(!confirm("Erase this item matrix parameter permanently?")) return;
+            fetch(`/admin/${type}/delete`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ id: id })
+            }).then(res => { if(res.ok) loadContentRegistries(); });
+        }
+
+        // --- 4. IDENTITY REGISTRY CONTROLLERS (CUSTOMERS) ---
+       function loadUserRegistries() {
+    fetch('/api/users/customers')
+        .then(r => r.json())
+        .then(data => {
+            localCustomers = data; 
+            const list = document.getElementById('customer-list');
+            list.innerHTML = data.map(u => `
+                <div class="p-4 flex justify-between items-center text-xs hover:bg-gray-50 transition">
+                    <div>
+                        <p class="font-black text-blue-950">${u.name}</p>
+                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">@${u.username}</p>
+                        <p class="text-[10px] text-gray-400">${u.email}</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="prepareEdit(${u.id})" class="bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded font-bold transition">Edit</button>
+                    </div>
+                </div>
+            `).join('');
+        });
+}
+
+
+        // --- NEW STAFF INTERFACE ACTIONS ---
+        function commitStaffForm(e) {
+            e.preventDefault();
+            const editId = document.getElementById('staff-edit-id').value;
+            
+            const payload = {
+                username: document.getElementById('staff-username').value,
+                role: document.getElementById('staff-role').value,
+                password: document.getElementById('staff-password').value
+            };
+
+            const endpoint = editId ? '/admin/staff/update' : '/admin/staff/create';
+            if(editId) payload.id = parseInt(editId);
+
+            fetch(endpoint, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            }).then(res => {
+                if(res.ok) {
+                    alert(editId ? 'Staff record updated.' : 'New operator provisioned successfully.');
+                    resetStaffForm();
+                    loadUserRegistries();
+                } else {
+                    alert('Action failed. Check console or role permission constraints.');
+                }
+            });
+        }
+
+        function editStaff(id) {
+            const s = localStaff.find(item => item.id === id);
+            if(!s) return;
+
+            document.getElementById('staff-edit-id').value = s.id;
+            document.getElementById('staff-username').value = s.username;
+            document.getElementById('staff-role').value = s.role;
+            
+            // Allow password to remain blank when updating profile
+            document.getElementById('staff-password').required = false;
+            document.getElementById('staff-password').placeholder = "Leave blank to keep current access key";
+            
+            document.getElementById('staff-form-title').innerText = "Modify Operator";
+            document.getElementById('staff-submit-btn').innerText = "Apply Record Changes";
+            document.getElementById('staff-cancel-btn').classList.remove('hidden');
+        }
+
+        function resetStaffForm() {
+            document.getElementById('form-staff').reset();
+            document.getElementById('staff-edit-id').value = "";
+            document.getElementById('staff-password').required = true;
+            document.getElementById('staff-password').placeholder = "••••••••";
+            document.getElementById('staff-form-title').innerText = "Provision Staff";
+            document.getElementById('staff-submit-btn').innerText = "Provision Operator";
+            document.getElementById('staff-cancel-btn').classList.add('hidden');
+        }
+
+        function commitUserChanges(id) {
+    const passwordElement = document.getElementById(`pass-${id}`);
+    
+    const data = {
+        id: id,
+        name: document.getElementById(`name-${id}`).value,
+        email: document.getElementById(`email-${id}`).value,
+        phone: document.getElementById(`phone-${id}`).value,
+        address: document.getElementById(`address-${id}`).value,
+        // Use optional chaining or a simple check
+        new_password: passwordElement ? passwordElement.value : ""
+    };
+
+    fetch('/admin/users/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(res => {
+        if(res.ok) {
+            alert('User Updated');
+            loadUserRegistries(); // Refresh the list to confirm changes
+        } else {
+            alert('Error updating user');
+        }
+    })
+    .catch(err => console.error("Update Error:", err));
+}
+
+        function purgeIdentity(id, context) {
+            if(!confirm(`Delete this system registration parameter profile?`)) return;
+            const endpoint = context === 'staff' ? '/admin/users/delete' : '/admin/users/delete'; 
+            
+            fetch(endpoint, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({id: id})
+            }).then(res => { if(res.ok) loadUserRegistries(); });
+        }
+// Function to save About text
+function updateAbout() {
+    const text = document.getElementById('about-input').value;
+    saveToServer('about_text', text);
+}
+
+// Function to save Dossier text
+function updateDossier() {
+    const text = document.getElementById('dossier-input').value;
+    saveToServer('dossier_text', text);
+}
+
+function saveToServer(key, value) {
+    fetch('/api/admin/update-text', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key, value })
+    }).then(res => alert("System Registry Updated"));
+}
+        // Initialize view terminal instance
+        switchTab('tab-logo');
+
+function handleServiceSubmit() {
+    const editId = document.getElementById('service-edit-id').value;
+    const form = document.getElementById('form-services');
+
+    if (editId) {
+        const payload = {
+            id: editId,
+            title: document.getElementById('service-title').value,
+            description: document.getElementById('service-description').value,
+            content: document.getElementById('service-content').value
+        };
+
+        console.log("Sending Payload:", JSON.stringify(payload)); // Check browser console (F12)
+
+        fetch('/admin/services/update', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json' 
+            },
+            body: JSON.stringify(payload)
+        }).then(res => {
+            if(res.ok) {
+                alert("Updated successfully");
+                location.reload();
+            } else {
+                res.text().then(text => alert("Error: " + text));
+            }
+        });
+    } else {
+        form.submit();
+    }
+}  
+// Function to show edit form in the left column
+function prepareEdit(id) {
+    const user = localCustomers.find(u => u.id === id);
+    const container = document.getElementById('edit-form-container');
+    
+    container.innerHTML = `
+        <div class="space-y-4">
+            <h4 class="font-bold border-b pb-2">Edit: ${user.username}</h4>
+            <input type="text" id="name-${user.id}" value="${user.name || ''}" placeholder="Name" class="w-full border p-2 rounded text-xs">
+            <input type="text" id="email-${user.id}" value="${user.email || ''}" placeholder="Email" class="w-full border p-2 rounded text-xs">
+            <input type="text" id="phone-${user.id}" value="${user.phone || ''}" placeholder="Phone" class="w-full border p-2 rounded text-xs">
+            <input type="text" id="address-${user.id}" value="${user.address || ''}" placeholder="Address" class="w-full border p-2 rounded text-xs">
+            <input type="password" id="pass-${user.id}" placeholder="New Password (Optional)" class="w-full border p-2 rounded text-xs">
+            
+            <button onclick="commitUserChanges(${user.id})" class="w-full bg-blue-900 text-white p-2 rounded font-bold text-xs hover:bg-black">Save Changes</button>
+            <button onclick="purgeIdentity(${user.id})" class="w-full bg-red-100 text-red-600 p-2 rounded font-bold text-xs hover:bg-red-200">Delete Customer</button>
+        </div>
+    `;
+}
+
+
+// Function to delete a user
+function purgeIdentity(id) {
+    if(!confirm("Are you sure? This action cannot be reversed.")) return;
+    
+    fetch('/admin/users/delete', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({id: id})
+    }).then(res => {
+        if(res.ok) {
+            alert('Customer Deleted');
+            loadUserRegistries(); // Refresh list
+            document.getElementById('edit-form-container').innerHTML = '<p>Select a customer...</p>';
+        }
+    });
+}
+
+
+function loadStaffRegistry() {
+    fetch('/admin/staff/list')
+        .then(r => r.json())
+        .then(data => {
+            localStaff = data;
+            const container = document.getElementById('staff-list');
+            container.innerHTML = data.map(s => `
+                <div class="p-4 flex justify-between items-center text-xs hover:bg-gray-50 transition">
+                    <div>
+                        <p class="font-black text-gray-900">@${s.username}</p>
+                        <p class="text-[9px] font-bold uppercase text-purple-600">${s.role}</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="prepareEditStaff(${s.id})" class="bg-purple-50 text-purple-700 px-3 py-1.5 rounded font-bold">Edit</button>
+                        <button onclick="deleteStaff(${s.id})" class="bg-red-50 text-red-600 px-3 py-1.5 rounded font-bold">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        });
+}
+
+function prepareEditStaff(id) {
+    const staff = localStaff.find(s => s.id === id);
+    const container = document.getElementById('staff-edit-form-container');
+    
+    container.innerHTML = `
+        <div class="space-y-4">
+            <h4 class="font-bold border-b pb-2">Edit: @${staff.username}</h4>
+            <input type="text" id="s-username-${staff.id}" value="${staff.username}" class="w-full border p-2 rounded text-xs">
+            <select id="s-role-${staff.id}" class="w-full border p-2 rounded text-xs">
+                <option value="Inactive" ${staff.role === 'Admin' ? 'selected' : ''}>Inactive</option>
+                <option value="Manager" ${staff.role === 'Manager' ? 'selected' : ''}>Manager</option>
+                <option value="Owner" ${staff.role === 'Owner' ? 'selected' : ''}>Owner</option>
+            </select>
+            <input type="password" id="s-pass-${staff.id}" placeholder="New Password (Optional)" class="w-full border p-2 rounded text-xs">
+            
+            <button onclick="commitStaffChanges(${staff.id})" class="w-full bg-purple-700 text-white p-2 rounded font-bold text-xs">Save Personnel</button>
+        </div>
+    `;
+}
+async function openAddStaffModal() {
+    const username = prompt("Enter new username:");
+    const password = prompt("Enter new password:");
+    const role = "New User (Inactive)"; // Defaulting to Admin for now
+
+    if (!username || !password) return;
+
+    const response = await fetch('/admin/staff/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password, role })
+    });
+
+    if (response.ok) {
+        alert("Admin created successfully!");
+        loadStaffRegistry();
+    } else {
+        alert("Failed to create admin.");
+    }
+}
+async function createStaff() {
+    const data = {
+        username: document.getElementById('new-username').value,
+        role: document.getElementById('new-role').value,
+        password: document.getElementById('new-password').value
+    };
+
+    const res = await fetch('/admin/staff/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    });
+
+    if (res.ok) {
+        alert("Admin created successfully.");
+        location.reload();
+    } else {
+        const msg = await res.text();
+        alert("Failed: " + msg); // This will show the actual error
+    }
+}
+async function deleteStaff(id) {
+    if (!confirm("Are you sure you want to remove this administrator?")) return;
+
+    try {
+        const response = await fetch('/admin/staff/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id })
+        });
+
+        if (response.ok) {
+            alert("Staff member removed.");
+            loadStaffRegistry(); // Refreshes the list automatically
+        } else {
+            alert("Delete failed: Check your permissions.");
+        }
+    } catch (err) {
+        console.error("Error:", err);
+    }
+}function commitStaffChanges(id) {
+    const data = {
+        id: id,
+        username: document.getElementById(`s-username-${id}`).value,
+        role: document.getElementById(`s-role-${id}`).value,
+        password: document.getElementById(`s-pass-${id}`).value
+    };
+
+    fetch('/admin/staff/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(res => {
+        if (res.ok) {
+            alert('Staff updated successfully');
+            loadStaffRegistry(); // Refresh the list
+            document.getElementById('staff-edit-form-container').innerHTML = '<p class="text-xs italic">Select a staff member to edit.</p>';
+        } else {
+            alert('Error updating staff.');
+        }
+    })
+    .catch(err => console.error("Update failed:", err));
+}
+</script>
+</body>
+</html>
