@@ -401,6 +401,14 @@ app.post('/admin/staff/update', checkAuth, authorize(['Owner', 'Manager']), asyn
         res.status(500).send("Update Failed");
     }
 });
+app.get('/emergency-create-admin', async (req, res) => {
+const hash = await bcrypt.hash('password123', 10);
+db.run("INSERT INTO staff (username, role, password) VALUES (?, ?, ?)",
+['Admin', 'Owner', hash], (err) => {
+if (err) res.send("Error: " + err.message);
+else res.send("Admin created! NOW DELETE THIS ROUTE AND RE-DEPLOY.");
+});
+});
 
 app.post('/admin/staff/delete', checkAuth, authorize(['Owner']), (req, res) => {
     const { id } = req.body;
