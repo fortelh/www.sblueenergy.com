@@ -1,10 +1,20 @@
 {
+  "name": "your-project-name",
+  "version": "1.0.0",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": "20.x"
+  },
   "dependencies": {
     "bcrypt": "^6.0.0",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
     "multer": "^2.1.1",
     "nodemailer": "^8.0.10",
-    "sqlite3": "^6.0.1"
+    "sqlite3": "5.1.6"
   }
 }
