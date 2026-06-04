@@ -402,12 +402,21 @@ app.post('/admin/staff/update', checkAuth, authorize(['Owner', 'Manager']), asyn
     }
 });
 app.get('/emergency-create-admin', async (req, res) => {
-const hash = await bcrypt.hash('password123', 10);
-db.run("INSERT INTO staff (username, role, password) VALUES (?, ?, ?)",
-['Admin', 'Owner', hash], (err) => {
-if (err) res.send("Error: " + err.message);
-else res.send("Admin created! NOW DELETE THIS ROUTE AND RE-DEPLOY.");
-});
+    const hash = await bcrypt.hash('password123', 10);
+    
+    // 1. Remove existing to prevent conflict
+    db.run("DELETE FROM staff WHERE username = 'Admin'", () => {
+        // 2. Insert fresh
+        db.run("INSERT INTO staff (username, role, password) VALUES (?, ?, ?)", 
+        ['Admin', 'Owner', hash], (err) => {
+            if (err) {
+                console.error("Force Add Failed:", err);
+                res.send("Critical DB Error: " + err.message);
+            } else {
+                res.send("Admin forced into DB! Now delete this code and redeploy.");
+            }
+        });
+    });
 });
 
 app.post('/admin/staff/delete', checkAuth, authorize(['Owner']), (req, res) => {
